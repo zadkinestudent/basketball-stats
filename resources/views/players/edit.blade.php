@@ -6,31 +6,52 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-md mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
 
-                <form method="POST" action="{{ route('players.update', $player->id) }}">
+                <!-- Fouten -->
+                @if ($errors->any())
+                    <div class="mb-4">
+                        <ul class="list-disc list-inside text-red-500">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form action="{{ route('players.update', $player->id) }}" method="POST">
                     @csrf
                     @method('PUT')
 
+                    <!-- Naam -->
                     <div class="mb-4">
-                        <label class="block mb-1 font-semibold">Naam:</label>
-                        <input type="text" name="name" class="w-full px-3 py-2 border rounded" value="{{ $player->name }}" required>
+                        <label for="name" class="block font-semibold mb-1">Naam</label>
+                        <input type="text" name="name" id="name" value="{{ old('name', $player->name) }}" 
+                               class="w-full border rounded px-3 py-2" required>
                     </div>
 
+                    <!-- Nummer -->
                     <div class="mb-4">
-                        <label class="block mb-1 font-semibold">Nummer:</label>
-                        <input type="number" name="number" class="w-full px-3 py-2 border rounded" value="{{ $player->number }}" required>
+                        <label for="number" class="block font-semibold mb-1">Nummer</label>
+                        <input type="number" name="number" id="number" value="{{ old('number', $player->number) }}" 
+                               class="w-full border rounded px-3 py-2" min="0" max="99" required>
                     </div>
 
+                    <!-- Positie -->
                     <div class="mb-4">
-                        <label class="block mb-1 font-semibold">Positie:</label>
-                        <input type="text" name="position" class="w-full px-3 py-2 border rounded" value="{{ $player->position }}" required>
+                        <label for="position" class="block font-semibold mb-1">Positie</label>
+                        <select name="position" id="position" class="w-full border rounded px-3 py-2" required>
+                            <option value="">Kies positie</option>
+                            <option value="Guard" {{ old('position', $player->position) == 'Guard' ? 'selected' : '' }}>Guard</option>
+                            <option value="Forward" {{ old('position', $player->position) == 'Forward' ? 'selected' : '' }}>Forward</option>
+                            <option value="Center" {{ old('position', $player->position) == 'Center' ? 'selected' : '' }}>Center</option>
+                        </select>
                     </div>
 
                     <button type="submit" 
-                            class="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 transition duration-200">
-                        Opslaan
+                            class="px-6 py-3 bg-yellow-500 text-white font-semibold rounded-lg shadow hover:bg-yellow-600 transition duration-200">
+                        Speler Bijwerken
                     </button>
                 </form>
 

@@ -8,28 +8,32 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <!-- 🔹 Statistiek kaarten -->
+            <!-- 🔹 Statistiek kaarten met dynamische kleuren -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Totaal spelers -->
-                <div class="bg-blue-500 text-white p-6 rounded-lg shadow">
+                <div class="p-6 rounded-lg shadow text-white"
+                     style="background-color: {{ $totalPlayers > 10 ? '#1e40af' : '#3b82f6' }}">
                     <h3 class="text-lg font-bold">Totaal Spelers</h3>
                     <p class="text-3xl mt-2">{{ $totalPlayers ?? 0 }}</p>
                 </div>
 
                 <!-- Guard spelers -->
-                <div class="bg-green-500 text-white p-6 rounded-lg shadow">
+                <div class="p-6 rounded-lg shadow text-white"
+                     style="background-color: {{ ($positions['Guard'] ?? 0) > 5 ? '#166534' : '#22c55e' }}">
                     <h3 class="text-lg font-bold">Guards</h3>
                     <p class="text-3xl mt-2">{{ $positions['Guard'] ?? 0 }}</p>
                 </div>
 
                 <!-- Forward spelers -->
-                <div class="bg-yellow-500 text-white p-6 rounded-lg shadow">
+                <div class="p-6 rounded-lg shadow text-white"
+                     style="background-color: {{ ($positions['Forward'] ?? 0) > 5 ? '#b45309' : '#f59e0b' }}">
                     <h3 class="text-lg font-bold">Forwards</h3>
                     <p class="text-3xl mt-2">{{ $positions['Forward'] ?? 0 }}</p>
                 </div>
 
                 <!-- Center spelers -->
-                <div class="bg-red-500 text-white p-6 rounded-lg shadow">
+                <div class="p-6 rounded-lg shadow text-white"
+                     style="background-color: {{ ($positions['Center'] ?? 0) > 5 ? '#7f1d1d' : '#ef4444' }}">
                     <h3 class="text-lg font-bold">Centers</h3>
                     <p class="text-3xl mt-2">{{ $positions['Center'] ?? 0 }}</p>
                 </div>

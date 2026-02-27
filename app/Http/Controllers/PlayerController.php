@@ -22,15 +22,12 @@ class PlayerController extends Controller
     // 🔹 Spelerslijst met zoek- en filterfunctionaliteit
     public function index(Request $request)
     {
-        // Query op Player model voor ingelogde user
         $query = Player::where('user_id', Auth::id());
 
-        // Zoekfunctie: zoek op naam
         if ($request->has('search') && $request->search != '') {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        // Filterfunctie: filter op positie
         if ($request->has('position') && $request->position != '') {
             $query->where('position', $request->position);
         }
@@ -46,13 +43,22 @@ class PlayerController extends Controller
         return view('players.create');
     }
 
-    // 🔹 Opslaan nieuwe speler
+    // 🔹 Opslaan nieuwe speler met uitgebreide validatie
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'number' => 'required|integer',
-            'position' => 'required',
+            'name' => 'required|string|max:255',
+            'number' => [
+                'required',
+                'integer',
+                'between:0,99',
+                function ($attribute, $value, $fail) {
+                    if (Player::where('user_id', Auth::id())->where('number', $value)->exists()) {
+                        $fail('Dit nummer is al in gebruik door een andere speler.');
+                    }
+                },
+            ],
+            'position' => 'required|in:Guard,Forward,Center',
         ]);
 
         Player::create([
@@ -75,7 +81,7 @@ class PlayerController extends Controller
         return view('players.edit', compact('player'));
     }
 
-    // 🔹 Update speler
+    // 🔹 Update speler met uitgebreide validatie
     public function update(Request $request, Player $player)
     {
         if ($player->user_id !== Auth::id()) {
@@ -83,9 +89,21 @@ class PlayerController extends Controller
         }
 
         $request->validate([
-            'name' => 'required',
-            'number' => 'required|integer',
-            'position' => 'required',
+            'name' => 'required|string|max:255',
+            'number' => [
+                'required',
+                'integer',
+                'between:0,99',
+                function ($attribute, $value, $fail) use ($player) {
+                    if (Player::where('user_id', Auth::id())
+                        ->where('number', $value)
+                        ->where('id', '!=', $player->id)
+                        ->exists()) {
+                        $fail('Dit nummer is al in gebruik door een andere speler.');
+                    }
+                },
+            ],
+            'position' => 'required|in:Guard,Forward,Center',
         ]);
 
         $player->update([
