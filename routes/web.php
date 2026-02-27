@@ -23,7 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Player CRUD routes
-    Route::resource('players', PlayerController::class);
+    Route::resource('players', PlayerController::class)->middleware('auth');
 });
 
 // Auth routes (login, register, etc.)

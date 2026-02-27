@@ -11,7 +11,7 @@ class PlayerController extends Controller
     // 🔹 Dashboard met statistieken
     public function dashboardStats()
     {
-        $players = Auth::user()->players;
+        $players = Player::where('user_id', Auth::id())->get();
 
         $totalPlayers = $players->count();
         $positions = $players->groupBy('position')->map->count();
@@ -19,10 +19,24 @@ class PlayerController extends Controller
         return view('dashboard', compact('players', 'totalPlayers', 'positions'));
     }
 
-    // 🔹 Spelerslijst
-    public function index()
+    // 🔹 Spelerslijst met zoek- en filterfunctionaliteit
+    public function index(Request $request)
     {
-        $players = Auth::user()->players;
+        // Query op Player model voor ingelogde user
+        $query = Player::where('user_id', Auth::id());
+
+        // Zoekfunctie: zoek op naam
+        if ($request->has('search') && $request->search != '') {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Filterfunctie: filter op positie
+        if ($request->has('position') && $request->position != '') {
+            $query->where('position', $request->position);
+        }
+
+        $players = $query->get();
+
         return view('players.index', compact('players'));
     }
 
@@ -41,7 +55,12 @@ class PlayerController extends Controller
             'position' => 'required',
         ]);
 
-        Auth::user()->players()->create($request->all());
+        Player::create([
+            'name' => $request->name,
+            'number' => $request->number,
+            'position' => $request->position,
+            'user_id' => Auth::id(),
+        ]);
 
         return redirect()->route('players.index');
     }
@@ -69,9 +88,23 @@ class PlayerController extends Controller
             'position' => 'required',
         ]);
 
-        $player->update($request->all());
+        $player->update([
+            'name' => $request->name,
+            'number' => $request->number,
+            'position' => $request->position,
+        ]);
 
         return redirect()->route('players.index');
+    }
+
+    // 🔹 Spelerdetailpagina
+    public function show(Player $player)
+    {
+        if ($player->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        return view('players.show', compact('player'));
     }
 
     // 🔹 Delete speler

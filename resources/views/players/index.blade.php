@@ -8,7 +8,24 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            <!-- Knop nieuwe speler -->
+            <!-- 🔹 Zoek- en filterformulier -->
+            <form method="GET" action="{{ route('players.index') }}" class="flex flex-wrap space-x-2 mb-4">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Zoek op naam"
+                       class="px-3 py-2 border rounded w-full sm:w-1/2 mb-2 sm:mb-0">
+
+                <select name="position" class="px-3 py-2 border rounded w-full sm:w-1/3 mb-2 sm:mb-0">
+                    <option value="">Alle posities</option>
+                    <option value="Guard" {{ request('position') == 'Guard' ? 'selected' : '' }}>Guard</option>
+                    <option value="Forward" {{ request('position') == 'Forward' ? 'selected' : '' }}>Forward</option>
+                    <option value="Center" {{ request('position') == 'Center' ? 'selected' : '' }}>Center</option>
+                </select>
+
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-200">
+                    Filteren
+                </button>
+            </form>
+
+            <!-- 🔹 Knop nieuwe speler -->
             <div class="mb-4">
                 <a href="{{ route('players.create') }}" 
                    class="inline-block px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow hover:bg-green-600 transition duration-200">
@@ -30,7 +47,13 @@
                         <tbody>
                             @foreach($players as $player)
                                 <tr>
-                                    <td class="border-b px-4 py-2">{{ $player->name }}</td>
+                                    <!-- Naam klikbaar naar show pagina -->
+                                    <td class="border-b px-4 py-2">
+                                        <a href="{{ route('players.show', $player->id) }}" 
+                                           class="text-blue-500 hover:underline">
+                                            {{ $player->name }}
+                                        </a>
+                                    </td>
                                     <td class="border-b px-4 py-2">{{ $player->number }}</td>
                                     <td class="border-b px-4 py-2">{{ $player->position }}</td>
                                     <td class="border-b px-4 py-2 space-x-2">
