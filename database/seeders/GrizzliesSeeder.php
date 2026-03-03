@@ -31,6 +31,7 @@ class GrizzliesSeeder extends Seeder
             ['name' => 'Javon Small', 'number' => 10, 'position' => 'Guard', 'user_id' => $userId],
             ['name' => 'Cam Spencer', 'number' => 24, 'position' => 'Guard', 'user_id' => $userId],
             ['name' => 'Jaylen Wells', 'number' => 0, 'position' => 'Forward', 'user_id' => $userId],
+            ['name' => 'Desmond Bane', 'number' => 22, 'position' => 'Guard', 'user_id' => $userId],
         ];
 
         foreach ($players as $player) {

@@ -10,10 +10,14 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
 
                 <!-- Speler info card -->
-                <div class="mb-4">
-                    <h3 class="text-2xl font-bold mb-2">{{ $player->name }}</h3>
-                    <p class="mb-1"><strong>Nummer:</strong> {{ $player->number }}</p>
-                    <p class="mb-1"><strong>Positie:</strong> {{ $player->position }}</p>
+                <div class="mb-4 space-y-2">
+                    <h3 class="text-2xl font-bold">{{ $player->name }}</h3>
+                    <p><strong>Nummer:</strong> {{ $player->number }}</p>
+                    <p><strong>Positie:</strong> {{ $player->position }}</p>
+                    <p><strong>Leeftijd:</strong> {{ $player->age }}</p>
+                    <p><strong>Lengte:</strong> {{ $player->height }}</p>
+                    <p><strong>Gewicht:</strong> {{ $player->weight }}</p>
+                    <p><strong>College:</strong> {{ $player->college }}</p>
                 </div>
 
                 <!-- Actieknoppen -->

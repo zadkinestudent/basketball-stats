@@ -9,17 +9,21 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up(): void
-{
-    Schema::create('players', function (Blueprint $table) {
-        $table->id();
-        $table->string('name');
-        $table->integer('number');
-        $table->string('position');
-        $table->foreignId('user_id')->constrained()->onDelete('cascade');
-        $table->timestamps();
-    });
-}
+    public function up(): void
+    {
+        Schema::create('players', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->integer('number');
+            $table->string('position');
+            $table->integer('age')->nullable();
+            $table->string('height')->nullable();
+            $table->string('weight')->nullable();
+            $table->string('college')->nullable();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.
