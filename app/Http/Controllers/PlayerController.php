@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Player;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class PlayerController extends Controller
 {
     // 🔹 Dashboard met statistieken
     public function dashboardStats()
     {
-        $players = Player::where('user_id', Auth::id())->get();
+        // Haal nu **alle spelers** op, niet per user
+        $players = Player::all();
 
         $totalPlayers = $players->count();
         $positions = $players->groupBy('position')->map->count();
@@ -22,7 +22,7 @@ class PlayerController extends Controller
     // 🔹 Spelerslijst met zoek- en filterfunctionaliteit
     public function index(Request $request)
     {
-        $query = Player::where('user_id', Auth::id());
+        $query = Player::query(); // haal alles
 
         if ($request->has('search') && $request->search != '') {
             $query->where('name', 'like', '%' . $request->search . '%');
@@ -43,21 +43,12 @@ class PlayerController extends Controller
         return view('players.create');
     }
 
-    // 🔹 Opslaan nieuwe speler met uitgebreide validatie
+    // 🔹 Opslaan nieuwe speler met validatie
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'number' => [
-                'required',
-                'integer',
-                'between:0,99',
-                function ($attribute, $value, $fail) {
-                    if (Player::where('user_id', Auth::id())->where('number', $value)->exists()) {
-                        $fail('Dit nummer is al in gebruik door een andere speler.');
-                    }
-                },
-            ],
+            'number' => 'required|integer|between:0,99',
             'position' => 'required|in:Guard,Forward,Center',
         ]);
 
@@ -65,7 +56,10 @@ class PlayerController extends Controller
             'name' => $request->name,
             'number' => $request->number,
             'position' => $request->position,
-            'user_id' => Auth::id(),
+            'age' => $request->age ?? null,
+            'height' => $request->height ?? null,
+            'weight' => $request->weight ?? null,
+            'college' => $request->college ?? null,
         ]);
 
         return redirect()->route('players.index');
@@ -74,35 +68,15 @@ class PlayerController extends Controller
     // 🔹 Formulier speler bewerken
     public function edit(Player $player)
     {
-        if ($player->user_id !== Auth::id()) {
-            abort(403);
-        }
-
         return view('players.edit', compact('player'));
     }
 
-    // 🔹 Update speler met uitgebreide validatie
+    // 🔹 Update speler
     public function update(Request $request, Player $player)
     {
-        if ($player->user_id !== Auth::id()) {
-            abort(403);
-        }
-
         $request->validate([
             'name' => 'required|string|max:255',
-            'number' => [
-                'required',
-                'integer',
-                'between:0,99',
-                function ($attribute, $value, $fail) use ($player) {
-                    if (Player::where('user_id', Auth::id())
-                        ->where('number', $value)
-                        ->where('id', '!=', $player->id)
-                        ->exists()) {
-                        $fail('Dit nummer is al in gebruik door een andere speler.');
-                    }
-                },
-            ],
+            'number' => 'required|integer|between:0,99',
             'position' => 'required|in:Guard,Forward,Center',
         ]);
 
@@ -110,6 +84,10 @@ class PlayerController extends Controller
             'name' => $request->name,
             'number' => $request->number,
             'position' => $request->position,
+            'age' => $request->age ?? $player->age,
+            'height' => $request->height ?? $player->height,
+            'weight' => $request->weight ?? $player->weight,
+            'college' => $request->college ?? $player->college,
         ]);
 
         return redirect()->route('players.index');
@@ -118,20 +96,12 @@ class PlayerController extends Controller
     // 🔹 Spelerdetailpagina
     public function show(Player $player)
     {
-        if ($player->user_id !== Auth::id()) {
-            abort(403);
-        }
-
         return view('players.show', compact('player'));
     }
 
     // 🔹 Delete speler
     public function destroy(Player $player)
     {
-        if ($player->user_id !== Auth::id()) {
-            abort(403);
-        }
-
         $player->delete();
 
         return redirect()->route('players.index');

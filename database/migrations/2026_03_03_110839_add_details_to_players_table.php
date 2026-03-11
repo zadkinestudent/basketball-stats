@@ -8,10 +8,18 @@ return new class extends Migration {
     public function up()
     {
         Schema::table('players', function (Blueprint $table) {
-            $table->integer('age')->nullable();
-            $table->string('height')->nullable();
-            $table->string('weight')->nullable();
-            $table->string('college')->nullable();
+            if (!Schema::hasColumn('players', 'age')) {
+                $table->integer('age')->nullable()->after('position');
+            }
+            if (!Schema::hasColumn('players', 'height')) {
+                $table->string('height')->nullable()->after('age');
+            }
+            if (!Schema::hasColumn('players', 'weight')) {
+                $table->string('weight')->nullable()->after('height');
+            }
+            if (!Schema::hasColumn('players', 'college')) {
+                $table->string('college')->nullable()->after('weight');
+            }
         });
     }
 
